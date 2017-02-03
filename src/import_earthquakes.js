@@ -31,7 +31,7 @@ fetch(api_url)
         });
       });
 
-      await earthquakes.insert(eventsArray);
+      await earthquakes.insert(eventsArray, { continueOnError: true });
       await imports.insert(json.metadata);
       console.log("Data imported");
     }
