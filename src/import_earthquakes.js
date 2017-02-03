@@ -15,23 +15,27 @@ fetch(api_url)
       const eventsArray = [];
 
       json.features.map((event) => {
-        eventsArray.push({
-          id: event.id,
-          ...event.properties,
-          // time: Date(event.time),
-          // updated: Date(event.updated),
-          geometry: {
-            type: event.geometry.type,
-            coordinates: [event.geometry.coordinates[0], event.geometry.coordinates[1]]
-          },
-          depth: event.geometry.coordinates[2],
-          ids: event.properties.ids.split(",").filter(Boolean),
-          types: event.properties.types.split(",").filter(Boolean),
-          sources: event.properties.sources.split(",").filter(Boolean),
-        });
+        eventsArray.push(
+          {
+            insertOne: {
+              document: {
+                id: event.id,
+                ...event.properties,
+                geometry: {
+                  type: event.geometry.type,
+                  coordinates: [event.geometry.coordinates[0], event.geometry.coordinates[1]]
+                },
+                depth: event.geometry.coordinates[2],
+                ids: event.properties.ids.split(",").filter(Boolean),
+                types: event.properties.types.split(",").filter(Boolean),
+                sources: event.properties.sources.split(",").filter(Boolean)
+              }
+            }
+          }
+        );
       });
 
-      await earthquakes.insert(eventsArray, { continueOnError: true });
+      await earthquakes.bulkWrite(eventsArray);
       await imports.insert(json.metadata);
       console.log("Data imported");
     }

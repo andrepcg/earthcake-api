@@ -16,7 +16,7 @@ const near = (coordinates, radius = 2000) => ({
 export async function all(ctx, next) {
   const { collection, attribute, value } = ctx.params;
 
-  const results = await earthquakes.find();
+  const results = await earthquakes.find({}, { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } });
 
   ctx.body = {
     data: results
@@ -26,7 +26,10 @@ export async function all(ctx, next) {
 export async function findByCoords(ctx, next) {
   const { lat, long, radius } = ctx.query;
 
-  const results = await earthquakes.find(near([Number(lat), Number(long)], radius));
+  const results = await earthquakes.find(
+    near([Number(lat), Number(long)], radius),
+    { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } }
+  );
 
   ctx.body = {
     data: results
@@ -54,7 +57,7 @@ export async function find(ctx, next) {
 
   console.log(query)
 
-  const results = await earthquakes.find(query);
+  const results = await earthquakes.find(query, { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } });
 
   ctx.body = {
     data: results
@@ -87,7 +90,7 @@ export async function nearby(ctx, next) {
     }
   }
 
-  const res = await earthquakes.find(query);
+  const res = await earthquakes.find(query, { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } });
 
   ctx.body = {
     data: res
