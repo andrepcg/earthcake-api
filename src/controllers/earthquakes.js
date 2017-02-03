@@ -27,7 +27,7 @@ export async function findByCoords(ctx, next) {
   const { lat, long, radius } = ctx.query;
 
   const results = await earthquakes.find(
-    near([Number(lat), Number(long)], radius),
+    near([Number(long), Number(lat)], radius),
     { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } }
   );
 
@@ -54,8 +54,6 @@ export async function find(ctx, next) {
   if (since && !until)  query.time = { $gte: Number(since) };
   if (!since && until)  query.time = { $lte: Number(until) };
   if (since && until)   query.time = { $gte: Number(since), $lte: Number(until) };
-
-  console.log(query)
 
   const results = await earthquakes.find(query, { fields: { id: 1, place: 1, mag: 1, time: 1, geometry: 1 } });
 
