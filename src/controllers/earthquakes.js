@@ -14,17 +14,22 @@ const near = (coordinates, radius = 2000) => ({
 
 export async function last(ctx, next) {
   const { collection, attribute, value } = ctx.params;
+  const { since } = ctx.query;
+
+  const results = await earthquakes.find({ time: { $gte: Number(since) }});
 
   ctx.body = {
-    count: "last",
+    data: results
   };
 }
 
 export async function all(ctx, next) {
   const { collection, attribute, value } = ctx.params;
 
+  const results = await earthquakes.find();
+
   ctx.body = {
-    count: "all",
+    data: results
   };
 }
 
@@ -38,6 +43,33 @@ export async function findByCoords(ctx, next) {
   }
 }
 
+export async function find(ctx, next) {
+  const { type, magType, types, sources, ids, code, net, tsunami, status, felt, since, until } = ctx.query;
+
+  const query = {};
+  if (type)    query.type = type;
+  if (magType) query.magType = magType;
+  if (code)    query.code = code;
+  if (net)     query.net = net;
+  if (tsunami) query.tsunami = tsunami;
+  if (status)  query.status = status;
+  if (felt)    query.felt = felt;
+  if (types)   query.types = { $in: [types] };
+  if (sources) query.sources = { $in: [sources] };
+  if (ids)     query.ids = { $in: [ids] };
+
+  if (since && !until)  query.time = { $gte: Number(since) };
+  if (!since && until)  query.time = { $lte: Number(until) };
+  if (since && until)   query.time = { $gte: Number(since), $lte: Number(until) };
+
+  console.log(query)
+
+  const results = await earthquakes.find(query);
+
+  ctx.body = {
+    data: results
+  }
+}
 
 export async function single(ctx, next) {
   const { earthquake } = ctx;
@@ -53,16 +85,14 @@ export async function nearby(ctx, next) {
 
   let query = near(earthquake.geometry.coordinates, radius);
 
-  const originalTime = new Date(earthquake.time);
-  const fromTime = new Date(earthquake.time).setMinutes(originalTime.getMinutes() - 3)
-  const toTime = new Date(earthquake.time).setMinutes(originalTime.getMinutes() + 3)
+  const originalTime = earthquake.time;
 
   if (same_time) {
     query = {
       ...query,
       time: {
-        "$gte": new Date(fromTime),
-        "$lte": new Date(toTime)
+        "$gte": originalTime - 300 * 1000,
+        "$lte": originalTime + 300 * 1000
       }
     }
   }

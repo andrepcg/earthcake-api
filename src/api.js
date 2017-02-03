@@ -1,6 +1,6 @@
 import KoaRouter from 'koa-router';
 import { earthquakes } from './db';
-import { last, findByCoords, all, single, nearby } from './controllers/earthquakes';
+import { last, findByCoords, all, single, nearby, find } from './controllers/earthquakes';
 
 const api = KoaRouter({ prefix: '/api/earthquakes' });
 
@@ -22,6 +22,7 @@ async function getSingle(ctx, next) {
 
 api.get('/', all);
 api.get('/last', last);
+api.get('/find', find);
 api.get('/findByCoords', findByCoords);
 
 api.get('/:id', getSingle, single);
