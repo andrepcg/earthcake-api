@@ -12,16 +12,6 @@ const near = (coordinates, radius = 2000) => ({
   }
 });
 
-export async function last(ctx, next) {
-  const { collection, attribute, value } = ctx.params;
-  const { since } = ctx.query;
-
-  const results = await earthquakes.find({ time: { $gte: Number(since) }});
-
-  ctx.body = {
-    data: results
-  };
-}
 
 export async function all(ctx, next) {
   const { collection, attribute, value } = ctx.params;
