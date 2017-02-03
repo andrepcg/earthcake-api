@@ -18,6 +18,8 @@ fetch(api_url)
         eventsArray.push({
           id: event.id,
           ...event.properties,
+          time: Date(event.time),
+          updated: Date(event.updated),
           geometry: {
             type: event.geometry.type,
             coordinates: [event.geometry.coordinates[0], event.geometry.coordinates[1]]
