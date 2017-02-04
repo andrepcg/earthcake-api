@@ -94,3 +94,18 @@ export async function nearby(ctx, next) {
     data: res
   }
 }
+
+export async function getSingle(ctx, next) {
+  const { id } = ctx.params;
+  const earthquake = await earthquakes.findOne({ id });
+
+  if (!earthquake) {
+    ctx.body = {
+      error: "No earthquake with that ID"
+    };
+  }
+  else {
+    ctx.earthquake = earthquake;
+    await next();
+  }
+}
