@@ -35,8 +35,11 @@ fetch(api_url)
         );
       });
 
-      await earthquakes.bulkWrite(eventsArray);
+      console.log("Events count:", eventsArray.length);
+
+      await earthquakes.bulkWrite(eventsArray, { ContinueOnError: true, ordered: false });
       await imports.insert(json.metadata);
+      
       console.log("Data imported");
     }
   })
