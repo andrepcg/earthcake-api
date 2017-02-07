@@ -16,7 +16,7 @@ home.get('/', async (ctx, next) => {
 });
 
 const app = new Koa()
-  .use(serve(__dirname + "/public"))
+  .use(serve(__dirname + "/../public"))
   .use(cors())
   .use(json({ pretty: !isProduction }))
   .use(bodyParser())

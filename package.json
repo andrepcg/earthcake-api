@@ -22,7 +22,7 @@
     "start": "node index.js",
     "watch": "nodemon --exec npm run start",
     "postinstall": "npm run build",
-    "build": "babel src -d dist",
+    "build": "babel src -d dist --ignore public",
     "serve": "node dist/index.js",
     "import": "babel-node src/import_earthquakes"
   },
